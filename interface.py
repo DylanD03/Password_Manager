@@ -24,12 +24,16 @@ def print_Default_Footer():
 
 
 def display_Option(options, option_Number):
-	print_Default_Header()
+	"""
+	After user selects one of their options, display the respective interface.
 
+	"""
+	option = options[option_Number-1]
+	print_Default_Header()
 	print(" Enter \'Q\' on keyboard to go back to Main Menu")
-	print(" Selected Option #" + str(option_Number) + ": " + options[option_Number-1])
+	print(" Selected Option #" + str(option_Number) + ": " + option)
 	print()
-	print(" to " + options[option_Number-1] + " Enter: ")
+	print(" to " + option + " Enter: ")
 
 
 
