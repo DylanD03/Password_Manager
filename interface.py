@@ -8,7 +8,7 @@ def print_Default_Header():
 	"Password Manger v.x.y"
 
 	"""
-	print("-"*38)
+	print("--------------------------------------")
 	print("\t" + "Password Manager v.1.0\n")
 
 
@@ -19,7 +19,7 @@ def print_Default_Footer():
 
 	"""
 	print()
-	print("-"*38)
+	print("--------------------------------------")
 
 
 
@@ -116,7 +116,7 @@ def main():
 
 		display_Option(options, user_Input)
 		user_Input, cFlag = safe_Input(options)
-		
+
 
 
 
