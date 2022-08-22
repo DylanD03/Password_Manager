@@ -7,7 +7,7 @@ def print_Default_Header():
 
 	"""
 	print("--------------------------------------")
-	print("\t" + "Password Manager v.1.0\n")
+	print("\t" + "Password Manager v.1.1\n")
 
 
 def print_Default_Footer():
@@ -25,40 +25,41 @@ def display_Option(options, option_Number, try_again = 0):
 	After user selects one of their options, display the respective interface.
 
 	"""
-	while True:
+	while True: # Keep displying that option screen until a valid input has been entered.
 		option = options[option_Number-1]
+
 		print_Default_Header()
 		print(" Enter \'Q\' on keyboard to go back to Main Menu")
 		print(" Selected Option #" + str(option_Number) + ": " + option)
 		print()
 		print(" to " + option + " Enter: ")
 
-		if option_Number == 1: # Add Password
+		if option == "Add Password":
 			print(" Username Password Website")
 			print()
 			print(" Example Usage: ")
 			print(" myusername mypassword github")
 
-		elif option_Number == 2: # Delete password
+		elif option == "Delete Password": 
 			Password_Manager.show_all()
 			print()
 			print("Enter the row number of the password to be deleted")
 
 
-		elif option_Number == 3: # Show password from a site
+		elif option == "Show password from a Site": 
 			print(" Website")
 			print()
 			print(" Example Usage: ")
 			print(" github")
 
-		elif option_Number == 4:
+		elif option == "View All":
 			print(" \'1\'")
 
-		elif option_Number == 5:
+		elif option == "Delete All":
 			print(" (y/n)\n")
 			print(" Example Usage: 'y'")
 			print(" note: ALL passwords will be deleted, and cannot be recovered")
-			print(" Input 'n' or 'q' if you change your mind")
+			print(" Input 'n' if you change your mind")
 
 		if try_again == 1:
 			print("\n Previous input is invalid, try again")
@@ -66,15 +67,14 @@ def display_Option(options, option_Number, try_again = 0):
 		print_Default_Footer()
 
 		cFlag = 0
-		user_Entry, cFlag = safe_Input_Options(options, option_Number)
+		user_Entry, cFlag = safe_Input_Options(option)
 
-		if cFlag: # proper input is used, can exit the 'option' screen
-			break
 		if not cFlag:
 			try_again == 1 
 			continue
+		break
 
-	return user_Entry # later perform operation based on this user entry.
+	return cFlag # A valid entry has been entered and processed
 
 
 	
@@ -94,6 +94,7 @@ def display_Main_Menu(options, cFlag = 1):
 			print(" " + str(i+1) + " : " + option)
 
 		if not cFlag:
+			print()
 			print("  Incorrect Input:")
 			print("  Example Usage: \"1\"")
 		print("\n Or enter 'q' to exit the program")
@@ -101,7 +102,7 @@ def display_Main_Menu(options, cFlag = 1):
 
 
 		user_Input, cFlag = safe_Input_Main(options)
-		if not cFlag:
+		if not cFlag: # Invalid input
 			continue  # Restart main menu but with example usage
 		if cFlag: break
 
@@ -126,41 +127,76 @@ def safe_Input_Main(options):
 		return user_Input, 1 
 
 
-def safe_Input_Options(options, option_Number): # maybe change var name to option_Choice?
+
+def safe_Input_Options(option): 
 	
 	user_Input = input("Your Input: ") 
 
+	if user_Input == "": # Invalid input for any operation.
+		return user_Input, 0
 
-	return option_Number, 1 
+	if option == "Add Password":
+		if len(user_Input.split()) == 3: # valid formatting (Username Password Website)
+			inp = user_Input.split()
+			Password_Manager.add_Password(inp[0], inp[1], inp[2])
+			return user_Input, 1
+
+	elif option == "Delete Password": 
+		if int(user_Input) in list(range(1, Password_Manager.count_all()+1)):
+			Password_Manager.Delete_Password(user_Input)
+			return user_Input, 1
+
+	elif option == "Show password from a Site": 
+		if len(user_Input.split()) == 1:
+			Password_Manager.show_website(user_Input)
+			return user_Input, 1
+
+	elif option == "View All":
+		if user_Input == '1':
+			Password_Manager.show_all()
+			return user_Input, 1
+
+	elif option == "Delete All":
+		if user_Input == 'y':
+			Password_Manager.delete_Database()
+			return user_Input, 1
+
+
+	return user_Input, 0 
 	
+
+		
 
 
 
 
 def main():
-	cFlag = 1
 	options = ["Add Password", "Delete Password", "Show password from a Site", "View All", "Delete All"]
 
-	user_Input = display_Main_Menu(options, cFlag) # Exits the main menu once a valid entry has been used.
+	while True:
+		user_Input = display_Main_Menu(options) # Exits the main menu once a valid entry has been used.
 
-	if user_Input == "q" or user_Input == "Q":
-		return 0  
+		if user_Input == "q" or user_Input == "Q":
+			break 
 
-	user_Entry = display_Option(options, user_Input) # Valid option is selected, display the corresponding interface
-
-
-
+		cFlag = display_Option(options, user_Input) # Valid option is selected, display the corresponding interface
 
 
+		if cFlag:
+			while True:
+				print_Default_Header()
+				print('Success!\nInput \'y\' to start again!')
+				print_Default_Footer()
+				
+				start_again = input('Your Input: ')
+				if start_again == "y" or "Y":
+					break
 
-
-
-
-
+			continue
 
 
 
 
 
 if __name__ == "__main__":
-	bb = main()
+	main()
