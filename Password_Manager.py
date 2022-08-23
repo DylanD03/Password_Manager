@@ -1,22 +1,5 @@
 import sqlite3
 
-"""
-VERY SIMPLE password manager.
-Usage:
-	You can manually type in your usernames/passwords into the database 
-	Can retrieve all usernames/passwords, or from specific sites.
-
-Passwords in the database stored as
-[username, password, website]
-
-TODO:
-Security
-	- Implement a master username/password to 'login' to password manager
-	- Encrpt passwords, maybe using SSH hashing?
-
-Extension
-	-Turn this password manager into a google extension.
-"""
 def connect_to_Database():
 	"""
 	returns a cursor to the database named password_database.db
@@ -41,7 +24,7 @@ def initialize_Database():
 	"""
 	connection, cur = connect_to_Database()
 
-	cur.execute("CREATE TABLE passwords (username TEXT, password TEXT, website TEXT)")
+	cur.execute("CREATE TABLE IF NOT EXISTS passwords (username TEXT, password TEXT, website TEXT)")
 	
 	commit_to_Database(connection)
 
@@ -75,14 +58,14 @@ def add_Password(username, password, website):
 
 
 
-def delete_Password(row_Number):
+def delete_Password(queried_site):
 	"""
 	Deletes the targetted password from the database
 	"""
 
 	connection, cur = connect_to_Database()
 
-	cur.execute("DELETE FROM passwords WHERE rowid = (?)", row_Number)
+	cur.execute("DELETE FROM passwords WHERE website = (?)", (queried_site,))
 
 	commit_to_Database(connection)
 
@@ -94,14 +77,13 @@ def show_all():
 	"""
 	connection, cur = connect_to_Database()
 
-	cur.execute("SELECT rowid, * FROM passwords")
+	cur.execute("SELECT * FROM passwords")
 	items = cur.fetchall()
 	for item in items:
 		print(item)
 
 	commit_to_Database(connection)
 
-	
 
 
 def show_website(queried_site):
@@ -113,10 +95,38 @@ def show_website(queried_site):
 
 	cur.execute("SELECT * FROM passwords WHERE website = (?)", (queried_site,))
 	items = cur.fetchall()
-	for item in items:
-		print(item)
+	if len(items) == 0:
+		print('None Available')
+	else: 
+		for item in items:
+			print(item)
 
 	commit_to_Database(connection)
 
+
+def is_Valid_Website(queried_site):
+
+	connection, cur = connect_to_Database()	
+	cur.execute("SELECT * FROM passwords WHERE website = (?)", (queried_site,))
+	items = cur.fetchall()
+	for item in items:
+		if item[2] == queried_site:
+			return True
+
+	commit_to_Database(connection)
+	return False
+
+
+def count_all():
+	"""
+	returns number of user/pass/web entries are in the database.
+	"""
+	connection, cur = connect_to_Database()
+
+	cur.execute("SELECT rowid, * FROM passwords")
+	items = cur.fetchall()
+	commit_to_Database(connection)
+
+	return len(items)
 
 
