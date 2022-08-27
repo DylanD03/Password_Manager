@@ -1,5 +1,8 @@
+from password_ManagerV2 import add_user, is_valid_user, get_user_hashed_password, delete_user, initialize_Database, get_all_users
+from secure import hash_password, generate_key, encrypt_message, decrypt_message
 import Password_Manager
 import os
+
 DEBUG = True
 
 """		
@@ -19,7 +22,7 @@ Extension
 """
 
 	
-def display_Main_Menu(options, current_user = None, try_again = 0):
+def display_Main_Menu(options, error_msg = None, current_user = None):
 	"""
 	prints the Main Menu of the interface, displaying the options for the user 
 """
@@ -36,11 +39,9 @@ def display_Main_Menu(options, current_user = None, try_again = 0):
 
 	print("\n Or enter 'q' to exit the program")
 
-	if try_again:
-		print("\n Previous input is invalid, try again.")
-		print(" Example Usage: \"1\"")
+	if error_msg is not None:
+		print('\n' + error_msg)
 	print("--------------------------------------")
-
 
 
 
@@ -65,19 +66,22 @@ def safe_Input_Main(options):
 		if user_Input == "q" or user_Input == "Q":
 			return user_Input # to exit program
 		if not user_Input.isdigit() or user_Input == '':
-			display_Main_Menu(options, try_again = True)
+			error_msg = " Invalid input formatting, try again. "
+			display_Main_Menu(options, error_msg)
 			continue # try again
 		# Input is a digit
 		if int(user_Input) not in list(range(1, len(options)+1)):
 			# try again. Input is not in the range of 1-n where n is the number of options
-			display_Main_Menu(options, try_again = True)
+			error_msg = " Invalid input formatting, try again. "
+			display_Main_Menu(options, error_msg)
 			continue 
 
 		return user_Input # valid input
 
 
 
-def display_login_option(option, try_again = 0):
+
+def display_login_option(option, error_msg = None):
 	"""
 	After user selects one of their options, display the respective interface.
 
@@ -106,16 +110,13 @@ def display_login_option(option, try_again = 0):
 		if option == "See all users":
 			print(" \'1\'\n")
 
-
-	if try_again:
-		print("\n Previous input had invalid formatting, try again")
+	if error_msg is not None:
+		print('\n' + error_msg)
 	print("--------------------------------------")
 
-def safe_input_login_options(option):
-	pass
 
 
-def display_Option(options, try_again = 0):
+def display_Option(options, error_msg = None):
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
 	print(" Enter \'q\' on keyboard to go back to Main Menu")
@@ -146,12 +147,9 @@ def display_Option(options, try_again = 0):
 		print(" New Username, New Password, and the website you want to replace")
 		print()
 		print(" Example Usage:\n NEWuser NEWpass github")
-	if try_again:
-		print("\n Previous input is invalid, try again")
+	if error_msg is not None:
+		print('\n' + error_msg)
 	print("--------------------------------------")
-
-
-
 
 
 
@@ -224,7 +222,84 @@ def safe_Input_Options(option):
 		display_Option(option, 1) # loop again until a valid input is used
 		continue 				  # readability
 
-	
+
+
+
+def safe_input_login_options(option):
+	while True:
+
+		user_Input = input('Your Input: ')
+		if user_Input == "": # Invalid input for any operation.
+			error_msg = " Error: Must have an input!"
+			display_login_option(option, error_msg)
+			continue # try again
+
+		if user_Input == 'q' or user_Input == 'Q':
+			return user_Input
+
+		inp = user_Input.split() # [username, password]
+
+		if option == "User Login":
+			if len(inp) == 2:
+				if is_valid_user(inp[0]):
+					if hash_password(inp[1]) == get_user_hashed_password(inp[0]):
+						return inp[0] # Successful login, can proceed to interact with password database				
+				error_msg = " Invalid username/password. Try again."
+				display_login_option(option, error_msg)
+				continue
+		elif option == "Register User":
+			if len(inp) == 2:
+				if is_valid_user(inp[0]):
+					error_msg = " This user already exists. Try another username!"
+					display_login_option(option, error_msg)
+					continue
+				else:	
+					add_user(inp[0], hash_password(inp[1]), generate_key()) 
+					print_success()
+					return # restart to login screen
+
+		elif option == "Delete User":
+			if len(inp) == 2:
+				if is_valid_user(inp[0]):
+					if hash_password(inp[1]) == get_user_hashed_password(inp[0]):
+						delete_user(inp[0])
+						print_success()
+						return # restart to login screen
+					else:
+						error_msg = " Entered Incorrect password. Cannot Delete user."
+						display_login_option(option, error_msg)
+						continue
+				else:
+					error_msg = " There are no users with name: \'" + inp[0] + " \'to delete"
+					display_login_option(option, error_msg)
+					continue
+			
+		if DEBUG:
+			if option == "See all users":
+				if user_Input == '1':
+					get_all_users()
+					print_success()
+					return
+
+
+		error_msg = " Invalid input formatting, try again."
+		display_login_option(option, error_msg) 			# loop again until a valid input is used
+		continue											# readability
+
+
+def print_success():
+	while True:
+		print("--------------------------------------")
+		print("\t" + "Password Manager v.2.0\n")
+		print('Success!\nInput \'y\' to start again!')
+		print("--------------------------------------")
+		
+		start_again = input('Your Input: ')
+		if start_again == "y" or start_again == "Y":
+			break
+	return
+
+
 		
 def main():
 	login_options = ["User Login", "Register User", "Delete User"]
@@ -233,11 +308,11 @@ def main():
 	options = ["Add Password", "Delete Password", "Show password from a Site", "View All", "Delete All", "Replace Information"]
 
 	if not os.path.exists('./password_database.v.2.db'): # version 2 
-		Password_Manager.initialize_Database() # Only creates database if it doesn't already exist.
+		initialize_Database() # Only creates database if it doesn't already exist.
 
 
 	user = None
-	while True:
+	while True: # Log in menu
 		display_Main_Menu(login_options)
 		user_Input = safe_Input_Main(login_options)
 
@@ -251,12 +326,18 @@ def main():
 		if DEBUG:
 			user_Entry = None
 
-		user_Entry = safe_input_login_options(option)
+		user_Entry = safe_input_login_options(option) # returns q to quit, or a valid username if password matches
 
 		if user_Entry == "q" or user_Entry == "Q":
 			continue # return to login screen
 
-		return
+		if user_Entry != None:
+			user = user_Entry
+			print("EQUALL!!!!!!")
+			# Give user pass key values here
+			break
+		
+
 
 
 	# Login is successful. Can access passwords database for that particular user.
@@ -264,7 +345,7 @@ def main():
 		display_Main_Menu(options, current_user = user)
 		user_Input = safe_Input_Main(options)
 
-		if user_Input == "q" or user_Input == "Q":
+		if user_Input == "q" or user_Input == "Q": 
 			exit()
 		
 		option = options[int(user_Input) - 1]
@@ -275,16 +356,8 @@ def main():
 		elif user_Entry == "n": # from option (delete all)
 			continue # return to main menu
 
-
-		while True:
-			print("--------------------------------------")
-			print("\t" + "Password Manager v.1.1\n")
-			print('Success!\nInput \'y\' to start again!')
-			print("--------------------------------------")
-			
-			start_again = input('Your Input: ')
-			if start_again == "y" or start_again == "Y":
-				break
+		print_success()
+		
 
 		
 
