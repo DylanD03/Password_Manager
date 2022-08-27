@@ -11,7 +11,7 @@ New Feature(s):
 	Can overwrite a row of information in the database.
 
 TODO:
-Security
+Security  
 	- Implement a master username/password to 'login' to password manager
 	- Encrpt passwords, maybe using SSH hashing?
 
@@ -84,7 +84,7 @@ def display_Option(option, try_again = 0):
 	# while True: # Keep displying that option screen until a valid input has been entered.
 
 	print("--------------------------------------")
-	print("\t" + "Password Manager v.1.1\n")
+	print("\t" + "Password Manager v.1.2\n")
 	print(" Enter \'q\' on keyboard to go back to Main Menu")
 	print(" Selected Option : " + option)
 	print()
@@ -110,9 +110,9 @@ def display_Option(option, try_again = 0):
 		print(" note: ALL passwords will be deleted, and cannot be recovered")
 		print(" Input 'n' if you change your mind")
 	elif option == "Replace Information":
-		print(" The name of the website")
+		print(" New Username, New Password, and the website you want to replace")
 		print()
-		print(" Example Usage:\n github")
+		print(" Example Usage:\n NEWuser NEWpass github")
 	if try_again:
 		print("\n Previous input is invalid, try again")
 	print("--------------------------------------")
@@ -136,31 +136,38 @@ def safe_Input_Options(option):
 		if option == "Add Password":
 			if len(user_Input.split()) == 3: # valid formatting (Username Password Website)
 				inp = user_Input.split()
-				Password_Manager.add_Password(inp[0], inp[1], inp[2])
-				return user_Input
-		elif option == "Delete Password": 
-			if not Password_Manager.is_Valid_Website(user_Input): 
-				print("There is no information associated with this website")
-				continue
-			else:
-				Password_Manager.delete_Password(user_Input) # information for the website exists in database
+				if Password_Manager.is_Valid_Website(inp[2]):
+					print("There already exists information for this website")
+					print("Use \'Replace Information\' instead")
+					continue
+				else:
+					Password_Manager.add_Password(inp[0], inp[1], inp[2])
+					return user_Input
+		elif option == "Delete Password":
+			if len(user_Input.split()) == 1: # websites must have no blank spaces in its name. 
+				if Password_Manager.is_Valid_Website(user_Input): 
+					Password_Manager.delete_Password(user_Input) # information for the website exists in database
+				else:
+					print("\nThere is no information associated with this website")
+					print("Enter \'q\' on keyboard to go back to the Main Menu")
+					continue
 				return user_Input
 		elif option == "Show password from a Site": 
 			if len(user_Input.split()) == 1: # websites must have no blank spaces in its name. 
-				if not Password_Manager.is_Valid_Website(user_Input):
-					print("There is no information associated with this website")
-					continue
-				else:
+				if Password_Manager.is_Valid_Website(user_Input):
 					Password_Manager.show_website(user_Input)
+				else:
+					print("\nThere is no information associated with this website")
+					print("Enter \'q\' on keyboard to go back to the Main Menu")
+					continue
 				return user_Input
 		elif option == "View All":
 			if user_Input == '1':
 				if Password_Manager.count_all() == 0:
 					print('You have no passwords saved!')
-					return user_Input
 				else:
 					Password_Manager.show_all()
-					return user_Input
+				return user_Input
 		elif option == "Delete All":
 			if user_Input == 'y':
 				Password_Manager.delete_Database()
@@ -169,7 +176,14 @@ def safe_Input_Options(option):
 			elif user_Input == 'n':
 				return user_Input
 		elif option == "Replace Information":
-			pass
+			if len(user_Input.split()) == 3:
+				inp = user_Input.split()
+				if Password_Manager.is_Valid_Website(inp[2]):
+					Password_Manager.delete_Password(inp[2])
+				else:
+					print("No pre-existing information was available to replace. Password will be added like normal")
+				Password_Manager.add_Password(inp[2],inp[1],inp[2]) # Add the information regardless if information already existed for that particular website
+				return user_Input
 
 		display_Option(option, 1) # loop again until a valid input is used
 		continue 				  # readability

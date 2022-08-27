@@ -129,12 +129,5 @@ def count_all():
 
 	return len(items)
 
-def replace_information(username, password, website):
-	"""
-	for a particular user,
-	replaces information for a website by deleting the old entry and replacing it with the new one.
-
-	"""
-	pass # future implementation
 
 
