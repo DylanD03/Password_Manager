@@ -164,7 +164,9 @@ def main():
 	if not os.path.exists('./password_database.v.2. db'):
 		Password_Manager.initialize_Database() # Only creates database if it doesn't already exist.
 
-	display_Login_Screen():
+	# display_Login_Screen():
+	# user_Login = safe_input_login()
+
 
 
 
@@ -179,7 +181,7 @@ def main():
 		user_Entry = safe_Input_Options(option) # also processes the tasks if the entry is valid
 		if user_Entry == "q" or user_Entry == "Q":
 			continue # return to main menu
-		elif user_Entry == "n":
+		elif user_Entry == "n": 
 			continue # return to main menu
 
 

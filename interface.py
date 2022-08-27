@@ -139,6 +139,7 @@ def safe_Input_Options(option):
 				if Password_Manager.is_Valid_Website(inp[2]):
 					print("There already exists information for this website")
 					print("Use \'Replace Information\' instead")
+					print("Enter \'q\' on keyboard to go back to the Main Menu")
 					continue
 				else:
 					Password_Manager.add_Password(inp[0], inp[1], inp[2])
