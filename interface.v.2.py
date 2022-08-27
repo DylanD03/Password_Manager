@@ -2,20 +2,18 @@ import Password_Manager
 import os
 
 """		
-Password Manager v.1.2
+Password Manager v.2.0
 Usage:
 	You can manually type in your usernames/passwords into the database 
 	Can retrieve all usernames/passwords, or from specific sites.
 
-New Feature(s):
-	Can overwrite a row of information in the database.
+V.2.0:
+	Information in the passwords database are now encrypted and cannot be accessed without the key. (master passcode)
+	Implemented Feature
+		- Overriding a row of information in database.
+		- Supports multiple users 
 
-TODO:
-Security
-	- Implement a master username/password to 'login' to password manager
-	- Encrpt passwords, maybe using SSH hashing?
-
-Extension
+Todo:
 	-Turn this password manager into a google extension.
 """
 
@@ -109,10 +107,6 @@ def display_Option(option, try_again = 0):
 		print(" Example Usage: 'y'")
 		print(" note: ALL passwords will be deleted, and cannot be recovered")
 		print(" Input 'n' if you change your mind")
-	elif option == "Replace Information":
-		print(" The name of the website")
-		print()
-		print(" Example Usage:\n github")
 	if try_again:
 		print("\n Previous input is invalid, try again")
 	print("--------------------------------------")
@@ -126,8 +120,7 @@ def safe_Input_Options(option):
 		user_Input = input("\nYour Input: ") 
 
 		if user_Input == "": # Invalid input for any operation.
-			display_Option(option, 1)
-			continue # try again
+			return user_Input
 
 		if user_Input == 'q' or user_Input == 'Q':
 			return user_Input
@@ -139,28 +132,20 @@ def safe_Input_Options(option):
 				Password_Manager.add_Password(inp[0], inp[1], inp[2])
 				return user_Input
 		elif option == "Delete Password": 
-			if not Password_Manager.is_Valid_Website(user_Input): 
-				print("There is no information associated with this website")
-				continue
-			else:
-				Password_Manager.delete_Password(user_Input) # information for the website exists in database
+			if Password_Manager.is_Valid_Website(user_Input): # information for the website exists in database
+				Password_Manager.delete_Password(user_Input)
 				return user_Input
 		elif option == "Show password from a Site": 
 			if len(user_Input.split()) == 1: # websites must have no blank spaces in its name. 
-				if not Password_Manager.is_Valid_Website(user_Input):
-					print("There is no information associated with this website")
-					continue
+				if not Password_Manager.is_Valid_Website():
+					print(" There is no information associated with this website")
 				else:
 					Password_Manager.show_website(user_Input)
 				return user_Input
 		elif option == "View All":
 			if user_Input == '1':
-				if Password_Manager.count_all() == 0:
-					print('You have no passwords saved!')
-					return user_Input
-				else:
-					Password_Manager.show_all()
-					return user_Input
+				Password_Manager.show_all()
+				return user_Input
 		elif option == "Delete All":
 			if user_Input == 'y':
 				Password_Manager.delete_Database()
@@ -168,18 +153,20 @@ def safe_Input_Options(option):
 				return user_Input
 			elif user_Input == 'n':
 				return user_Input
-		elif option == "Replace Information":
-			pass
-
-		display_Option(option, 1) # loop again until a valid input is used
-		continue 				  # readability
+		else:
+			display_Option(option, 1) # loop again until a valid input is used
+			continue 				  # readability
 
 	
 		
 def main():
-	options = ["Add Password", "Delete Password", "Show password from a Site", "View All", "Delete All", "Replace Information"]
-	if not os.path.exists('./password_database.db'):
+	options = ["Add Password", "Delete Password", "Show password from a Site", "View All", "Delete All"]
+	if not os.path.exists('./password_database.v.2. db'):
 		Password_Manager.initialize_Database() # Only creates database if it doesn't already exist.
+
+	display_Login_Screen():
+
+
 
 	while True:
 		display_Main_Menu(options)
@@ -192,7 +179,7 @@ def main():
 		user_Entry = safe_Input_Options(option) # also processes the tasks if the entry is valid
 		if user_Entry == "q" or user_Entry == "Q":
 			continue # return to main menu
-		elif user_Entry == "n": # from option (delete all)
+		elif user_Entry == "n":
 			continue # return to main menu
 
 
