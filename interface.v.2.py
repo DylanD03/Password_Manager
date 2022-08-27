@@ -1,4 +1,4 @@
-from password_ManagerV2 import add_user, is_valid_user, get_user_hashed_password, delete_user, initialize_Database, get_all_users
+from password_ManagerV2 import add_user, is_valid_user, get_user_hashed_password, delete_user, initialize_Database, get_all_users, retrieve_key
 from secure import hash_password, generate_key, encrypt_message, decrypt_message
 import Password_Manager
 import os
@@ -116,7 +116,7 @@ def display_login_option(option, error_msg = None):
 
 
 
-def display_Option(options, error_msg = None):
+def display_Option(option, error_msg = None):
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
 	print(" Enter \'q\' on keyboard to go back to Main Menu")
@@ -312,6 +312,8 @@ def main():
 
 
 	user = None
+	encryption_key = None
+	logged_in = False
 	while True: # Log in menu
 		display_Main_Menu(login_options)
 		user_Input = safe_Input_Main(login_options)
@@ -333,15 +335,14 @@ def main():
 
 		if user_Entry != None:
 			user = user_Entry
-			print("EQUALL!!!!!!")
-			# Give user pass key values here
+			encryption_key = retrieve_key(user)
+			logged_in = True
 			break
-		
 
 
 
 	# Login is successful. Can access passwords database for that particular user.
-	while True: 
+	while logged_in: 
 		display_Main_Menu(options, current_user = user)
 		user_Input = safe_Input_Main(options)
 

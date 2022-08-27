@@ -196,6 +196,16 @@ def get_all_users():
 		print(items)
 	commit_to_Database(connection)
 
+def retrieve_key(username):
+	connection, cur = connect_to_Database()
+
+	cur.execute("SELECT encryption_key from users WHERE user = (?)", (username,))
+	item = cur.fetchone()
+
+	commit_to_Database(connection)
+	return item[0] # item = (key,)
+
+
 
 
 
