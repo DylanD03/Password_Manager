@@ -152,6 +152,7 @@ Project Link: [https://github.com/DylanD03/Password_Manager](https://github.com/
 
 
 
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/DylanD03/Password_Manager.svg?style=for-the-badge
