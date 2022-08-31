@@ -9,12 +9,6 @@
 
 
 
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/DylanD03/Password_Manager">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
 
 <h3 align="center">Password_Manager</h3>
 
@@ -164,7 +158,7 @@ Project Link: [https://github.com/DylanD03/Password_Manager](https://github.com/
 [issues-shield]: https://img.shields.io/github/issues/DylanD03/Password_Manager.svg?style=for-the-badge
 [issues-url]: https://github.com/DylanD03/Password_Manager/issues
 [license-shield]: https://img.shields.io/github/license/DylanD03/Password_Manager.svg?style=for-the-badge
-[license-url]: https://github.com/DylanD03/Password_Manager/blob/master/LICENSE.txt
+[license-url]: https://github.com/DylanD03/Password_Manager/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/https://www.linkedin.com/in/dylan-du-12894924a/
 [product-screenshot]: images/screenshot.png
