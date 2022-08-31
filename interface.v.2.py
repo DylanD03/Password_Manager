@@ -1,31 +1,39 @@
-from password_ManagerV2 import add_user, is_valid_user, get_user_hashed_password, delete_user, initialize_Database, get_all_users, retrieve_key
-from secure import hash_password, generate_key, encrypt_message, decrypt_message
-import Password_Manager
-import os
-
-DEBUG = True
-
 """		
 Password Manager v.2.0
 
-New Feature(s):
-Security  
+New Feature(s in v.2.0 :
+Security:
 	- Implement a master username/password to 'login' to password manager
 	- Encrypted Passwords, need to log in to be able to see them.
-
-	Using ssh hashing you need your master password to use the key stored in the users database.
-	then with your key you can unencrypt information in the passwords database for that particular user.
+	- Passwords in the database are encrypted before storage.
 
 TODO:
 Extension
 	-Turn this password manager into a google extension. - v.3.0
 """
+from password_ManagerV2 import (
+	initialize_Database, add_Password, delete_Password, show_all, show_website, 
+	is_Valid_Website, count_all, add_user, delete_user, is_valid_user, 
+	get_user_hashed_password, get_all_users, retrieve_key, delete_Database_User,
+)
+from secure import hash_password, generate_key, encrypt_message, decrypt_message
+import os
+DEBUG = True
 
-	
+
 def display_Main_Menu(options, error_msg = None, current_user = None):
 	"""
-	prints the Main Menu of the interface, displaying the options for the user 
-"""
+	Displays the main menu for the user login and what options a user has after they log in.
+
+	Input:
+
+	options (list of strings) : The options listed in the main menu.
+	error_msg (string): To display at the bottom of the main menu
+	current_user (string): username
+
+	returns:
+	None
+	"""
 
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
@@ -52,7 +60,7 @@ def safe_Input_Main(options):
 	The input should be an integer from 1-n where n is the number of options.
 
 	Input: 
-	(list of strings) : The options listed in the main menu.
+	options (list of strings) : The options listed in the main menu.
 
 
 	returns
@@ -88,7 +96,7 @@ def display_login_option(option, error_msg = None):
 	"""
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
-	print(" Enter \'q\' on keyboard to go back to Login Menu")
+	print(" Enter \'q\' on keyboard to go back to the Main Menu")
 	print(" Selected Option : " + option)
 	print()
 	print(" to " + option + " Enter: ")
@@ -148,18 +156,19 @@ def display_Option(option, error_msg = None):
 		print()
 		print(" Example Usage:\n NEWuser NEWpass github")
 	if error_msg is not None:
-		print('\n' + error_msg)
+		print('\n ' + error_msg)
 	print("--------------------------------------")
 
 
 
-def safe_Input_Options(option): 
+def safe_Input_Options(option, user, encryption_key): 
 	while True: # never ending loop until input is a valid entry
 	
 		user_Input = input("\nYour Input: ") 
 
 		if user_Input == "": # Invalid input for any operation.
-			display_Option(option, 1)
+			error_msg = "Invalid input formatting, try again."
+			display_Option(option, error_msg)
 			continue # try again
 
 		if user_Input == 'q' or user_Input == 'Q':
@@ -167,59 +176,64 @@ def safe_Input_Options(option):
 
 
 		if option == "Add Password":
-			if len(user_Input.split()) == 3: # valid formatting (Username Password Website)
+			if len(user_Input.split()) == 3: # valid formatting : (Username Password Website)
 				inp = user_Input.split()
-				if Password_Manager.is_Valid_Website(inp[2]):
-					print("There already exists information for this website")
-					print("Use \'Replace Information\' instead")
-					print("Enter \'q\' on keyboard to go back to the Main Menu")
+				if is_Valid_Website(user, inp[2]):
+					error_msg = "Information for this website already exists.\n"
+					error_msg += " Use the \'Replace Information\' option instead."
+					display_Option(option, error_msg)
 					continue
 				else:
-					Password_Manager.add_Password(inp[0], inp[1], inp[2])
+					encrypted_pass = encrypt_message(inp[1], encryption_key)
+					add_Password(user, inp[0], encrypted_pass, inp[2]) # : (user, username, encrypted pass, website)
 					return user_Input
 		elif option == "Delete Password":
 			if len(user_Input.split()) == 1: # websites must have no blank spaces in its name. 
-				if Password_Manager.is_Valid_Website(user_Input): 
-					Password_Manager.delete_Password(user_Input) # information for the website exists in database
+				if is_Valid_Website(user, user_Input): 
+					delete_Password(user, user_Input) # information for the website exists in database
 				else:
-					print("\nThere is no information associated with this website")
-					print("Enter \'q\' on keyboard to go back to the Main Menu")
+					error_msg = "There is no information associated with this website"
+					display_Option(option, error_msg)
 					continue
 				return user_Input
 		elif option == "Show password from a Site": 
 			if len(user_Input.split()) == 1: # websites must have no blank spaces in its name. 
-				if Password_Manager.is_Valid_Website(user_Input):
-					Password_Manager.show_website(user_Input)
+				if is_Valid_Website(user, user_Input):
+					item = show_website(user, user_Input)
+					print((item[0]), decrypt_message(item[1], encryption_key), item[2])
 				else:
-					print("\nThere is no information associated with this website")
-					print("Enter \'q\' on keyboard to go back to the Main Menu")
+					error_msg = "There is no information associated with this website"
+					display_Option(option, error_msg)
 					continue
 				return user_Input
 		elif option == "View All":
 			if user_Input == '1':
-				if Password_Manager.count_all() == 0:
+				if count_all(user) == 0:
 					print('You have no passwords saved!')
 				else:
-					Password_Manager.show_all()
+					items = show_all(user) # list of lists
+					for item in items:
+						print((item[0], decrypt_message(item[1], encryption_key), item[2])) # (Username Password Website)
 				return user_Input
 		elif option == "Delete All":
 			if user_Input == 'y':
-				Password_Manager.delete_Database()
-				Password_Manager.initialize_Database()
+				delete_Database_User(user)
 				return user_Input
 			elif user_Input == 'n':
 				return user_Input
 		elif option == "Replace Information":
 			if len(user_Input.split()) == 3:
 				inp = user_Input.split()
-				if Password_Manager.is_Valid_Website(inp[2]):
-					Password_Manager.delete_Password(inp[2])
+				if is_Valid_Website(user, inp[2]):
+					delete_Password(user, inp[2])
 				else:
-					print("No pre-existing information was available to replace. Password will be added like normal")
-				Password_Manager.add_Password(inp[2],inp[1],inp[2]) # Add the information regardless if information already existed for that particular website
+					print("\nNo pre-existing information was available to replace.\nPassword will be added to the database.\n")
+				encrypted_pass = encrypt_message(inp[1], encryption_key)
+				add_Password(user, inp[0], encrypted_pass, inp[2]) # Add the information regardless if information already existed for that particular website
 				return user_Input
 
-		display_Option(option, 1) # loop again until a valid input is used
+		error_msg = "Invalid input formatting, try again."
+		display_Option(option, error_msg) # loop again until a valid input is used
 		continue 				  # readability
 
 
@@ -351,7 +365,7 @@ def main():
 		
 		option = options[int(user_Input) - 1]
 		display_Option(option) # Valid option is selected, display the corresponding interface
-		user_Entry = safe_Input_Options(option) # also processes the tasks if the entry is valid
+		user_Entry = safe_Input_Options(option, user, encryption_key) # also processes the tasks if the entry is valid
 		if user_Entry == "q" or user_Entry == "Q":
 			continue # return to main menu
 		elif user_Entry == "n": # from option (delete all)

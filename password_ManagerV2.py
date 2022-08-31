@@ -1,6 +1,6 @@
 import sqlite3
-DEBUG = True
-# passwords database
+DEBUG = False
+
 
 def connect_to_Database():
 	"""
@@ -48,6 +48,8 @@ def delete_Database():
 
 
 
+# READS/WRITES FROM/TO 'passwords' DATABASE
+
 def add_Password(current_user, username, encrypted_password, website):
 	"""
 	Example usage:
@@ -84,8 +86,11 @@ def show_all(current_user):
 
 	cur.execute("SELECT username, encrypted_password, website FROM passwords WHERE user = (?)", (current_user,))
 	items = cur.fetchall()
-	for item in items:     #####
-		print(item)
+
+	if DEBUG:
+		print('Debug')
+		for item in items:    
+			print(item)
 
 	commit_to_Database(connection)
 	return items
@@ -102,7 +107,10 @@ def show_website(current_user, queried_site):
 	cur.execute("SELECT username, encrypted_password, website FROM passwords WHERE user = (?) AND website = (?)", (current_user, queried_site))
 	item = cur.fetchone()
 	commit_to_Database(connection)
-	print(item)     #######
+	
+	if DEBUG:
+		print('Debug')
+		print(item)     
 
 	return item
 
@@ -112,6 +120,7 @@ def is_Valid_Website(current_user, queried_site):
 	connection, cur = connect_to_Database()	
 	cur.execute("SELECT username, encrypted_password, website FROM passwords WHERE user = (?) AND website = (?)", (current_user, queried_site))
 	items = cur.fetchall()
+	
 	for item in items:
 		if item[2] == queried_site:
 			commit_to_Database(connection)
@@ -130,22 +139,16 @@ def count_all(current_user):
 	cur.execute("SELECT * FROM passwords WHERE user = (?)", (current_user,))
 	items = cur.fetchall()
 	commit_to_Database(connection)
-	print(items)
+	
+	if DEBUG:
+		print('Debug')
+		print(items)
+
 	return len(items)
 
-def replace_instance(current_user, website):
-	"""
-	for a particular user,
-	replaces information for a website by deleting the old entry and replacing it with the new one.
-
-	"""
-	pass # future implementation
 
 
-
-
-
-# USERS INTERFACE
+# READS/WRITES FROM/TO USERS DATABASE
 def add_user(username, hashed_password, encryption_key):
 	"""
 	passwords should be hashed before being stored.
@@ -157,6 +160,7 @@ def add_user(username, hashed_password, encryption_key):
 
 	return
 
+
 def delete_user(username):
 	
 	connection, cur = connect_to_Database()
@@ -164,6 +168,7 @@ def delete_user(username):
 	commit_to_Database(connection)
 
 	return
+
 
 def is_valid_user(username):
 
@@ -178,6 +183,7 @@ def is_valid_user(username):
 
 	return True # user exists
 
+
 def get_user_hashed_password(username):
 
 	connection, cur = connect_to_Database()
@@ -186,6 +192,7 @@ def get_user_hashed_password(username):
 	commit_to_Database(connection)
 
 	return item[1] # (username, hashed_password)
+
 
 def get_all_users():
 	# For debugging purposes only!
@@ -196,6 +203,7 @@ def get_all_users():
 		print(items)
 	commit_to_Database(connection)
 
+
 def retrieve_key(username):
 	connection, cur = connect_to_Database()
 
@@ -204,6 +212,19 @@ def retrieve_key(username):
 
 	commit_to_Database(connection)
 	return item[0] # item = (key,)
+
+
+def delete_Database_User(username):
+	"""
+	Deletes information from a particular user in the 'passwords' database. Does not delete the user itself.
+	The user still exists in the 'user' database
+	"""
+
+	connection, cur = connect_to_Database()
+
+	cur.execute("DELETE FROM passwords WHERE user = (?)", (username,)) 
+
+	commit_to_Database(connection)
 
 
 
