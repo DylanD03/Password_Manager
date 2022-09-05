@@ -1,7 +1,7 @@
 """		
 Password Manager v.2.0
 
-New Feature(s in v.2.0 :
+New Feature's in v.2.0 :
 Security:
 	- Implement a master username/password to 'login' to password manager
 	- Encrypted Passwords, need to log in to be able to see them.
@@ -9,7 +9,7 @@ Security:
 
 TODO:
 Extension
-	-Turn this password manager into a google extension. - v.3.0
+	-Turn this password manager into a google extension. 
 """
 from password_ManagerV2 import (
 	initialize_Database, add_Password, delete_Password, show_all, show_website, 
@@ -18,20 +18,20 @@ from password_ManagerV2 import (
 )
 from secure import hash_password, generate_key, encrypt_message, decrypt_message
 import os
-DEBUG = True
+DEBUG = False
 
 
 def display_Main_Menu(options, error_msg = None, current_user = None):
 	"""
 	Displays the main menu for the user login and what options a user has after they log in.
 
-	Input:
+	Arguments:
 
 	options (list of strings) : The options listed in the main menu.
 	error_msg (string): To display at the bottom of the main menu
 	current_user (string): username
 
-	returns:
+	Returns:
 	None
 	"""
 
@@ -59,11 +59,11 @@ def safe_Input_Main(options):
 	Ensures the input for the main menu is a valid input.
 	The input should be an integer from 1-n where n is the number of options.
 
-	Input: 
+	Arguments: 
 	options (list of strings) : The options listed in the main menu.
 
 
-	returns
+	Returns
 	(string) user_Input : The option selected by the user. 
 
 	"""
@@ -92,7 +92,13 @@ def safe_Input_Main(options):
 def display_login_option(option, error_msg = None):
 	"""
 	After user selects one of their options, display the respective interface.
-
+	
+	Arguments :
+	option (string) : The selection made by the user in the log in screen.
+	error_msg (string) : If neccessary, display an error message to indicate that invalid input was used.
+	
+	Returns : 
+	None
 	"""
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
@@ -125,6 +131,19 @@ def display_login_option(option, error_msg = None):
 
 
 def display_Option(option, error_msg = None):
+	"""
+	After logging in and selecting an option from the main menu, display the interface for that particular option.
+	Includes example usage, how to exit, and instructions.
+
+	Arguments:
+
+	option (string) : The selection made by the user in the log in screen.
+	error_msg (string): To display at the bottom of the main menu in case invalid input was used previously.
+
+	Returns:
+	None
+	"""
+
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
 	print(" Enter \'q\' on keyboard to go back to Main Menu")
@@ -162,6 +181,19 @@ def display_Option(option, error_msg = None):
 
 
 def safe_Input_Options(option, user, encryption_key): 
+	"""
+	Processing user input and interacting with the database. Encrypting/Decrypting data if needed. 
+	Continues to ask for input until a valid input has been input by the user.
+
+	Arguments:
+
+	option (string) : The selection made by the user in the log in screen.
+	user (string) : The username used to log into the password manager
+	encryption_key (string): Key used to encrypt/decrypt passwords.
+
+	Returns:
+	user_Input (string) : Returns the user input when a valid input has been entered.
+	"""
 	while True: # never ending loop until input is a valid entry
 	
 		user_Input = input("\nYour Input: ") 
@@ -240,6 +272,16 @@ def safe_Input_Options(option, user, encryption_key):
 
 
 def safe_input_login_options(option):
+	"""
+	Proccessing user input in the Login screen. 
+
+	Arguments:
+
+	option (string) : The selection made by the user in the Login screen.
+
+	Returns:
+	None
+	"""
 	while True:
 
 		user_Input = input('Your Input: ')
@@ -302,6 +344,16 @@ def safe_input_login_options(option):
 
 
 def print_success():
+    """
+	Displays a message indicating that the password manager has successfully processed the user input.
+    User can start again after inputting "y" or "Y".
+    
+	Arguments:
+    None
+    
+	Returns:
+	None
+	"""
 	while True:
 		print("--------------------------------------")
 		print("\t" + "Password Manager v.2.0\n")
@@ -319,6 +371,7 @@ def main():
 	login_options = ["User Login", "Register User", "Delete User"]
 	if DEBUG:
 		login_options.append("See all users")
+        
 	options = ["Add Password", "Delete Password", "Show password from a Site", "View All", "Delete All", "Replace Information"]
 
 	if not os.path.exists('./password_database.v.2.db'): # version 2 
