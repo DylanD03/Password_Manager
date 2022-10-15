@@ -102,6 +102,7 @@ Must install the prerequsite packages before running the Password Manager
 - [ ] Information in each user's database is encrypted. 
     - [ ] Unable to view encrypted information in the database unless the user logs in with their master password.
     - [ ] one-way, SSH-256 encryption, such that the user's master password cannot be retrieved/read from the database.
+ - [ ] Also prevents SQL injections.
 
 
 See the [open issues](https://github.com/DylanD03/Password_Manager/issues) for a full list of proposed features (and known issues).
