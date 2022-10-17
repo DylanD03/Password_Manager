@@ -5,12 +5,6 @@ New Features in version 2.0
 	- Passwords are now encrypted before storage
 """
 # Import modules
-# from password_ManagerV2 import (
-# 	initialize_Database, add_Password, delete_Password, show_all, show_website, 
-# 	is_Valid_Website, count_all, add_user, delete_user, is_valid_user, 
-# 	get_user_hashed_password, get_all_users, retrieve_key, delete_Database_User,
-# )
-# from secure import hash_password, generate_key, encrypt_password, decrypt_password
 from database_manager import *
 from secure import *
 import os
