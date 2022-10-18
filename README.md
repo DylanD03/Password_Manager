@@ -95,14 +95,13 @@ Must install the prerequsite packages before running the Password Manager
 <!-- ROADMAP -->
 ## Features
 
-- [ ] Supports Multiple users.
-  - [ ] Able to add or remove users .
-  - [ ] Each user has their passwords encrypted with their respective private encryption keys.
+- [ ] Supports multiple users.
+  - [ ] Able to add or remove users.
+  - [ ] Must login to your account before viewing your passwords.
 - [ ] Users can Add, Delete, and View their own passwords.
-- [ ] Information in each user's database is encrypted. 
-    - [ ] Unable to view encrypted information in the database unless the user logs in with their master password.
-    - [ ] one-way, SSH-256 encryption, such that the user's master password cannot be retrieved/read from the database.
- - [ ] Also prevents SQL injections.
+- [ ] Passwords for each user is encrypted.
+    - [ ] one-way encryption using SHA 256.
+ - [ ] Secure from SQL injection attacks.
 
 
 See the [open issues](https://github.com/DylanD03/Password_Manager/issues) for a full list of proposed features (and known issues).
@@ -134,17 +133,6 @@ If you have a suggestion that would make this better, please fork the repo and c
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTACT -->
-## Contact
-
-
-Project Link: [https://github.com/DylanD03/Password_Manager](https://github.com/DylanD03/Password_Manager)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 
