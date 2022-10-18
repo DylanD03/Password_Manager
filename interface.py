@@ -21,7 +21,7 @@ def clear():
 
 def print_login_menu(option, error_msg = None):
 	"""
-	After user selects one of their options display the respective interface.
+	Prints login menu.
 	
 	Parameters :
 	option (string) : The selection made by the user in the log in screen.
@@ -60,7 +60,7 @@ def print_login_menu(option, error_msg = None):
 
 def print_user_menu(options, error_msg = None, current_user = None):
 	"""
-	Displays Login Menu
+	After user selects one of their options, display the respective interface.
 
 	Parameters:
 
@@ -79,7 +79,7 @@ def print_user_menu(options, error_msg = None, current_user = None):
 	print(" Here are your options:\n")
 	# Displaying each option and it's coresponding reference number.
 	for i, option in enumerate(options):
-		print(" " + str(i+1) + " : " + option) # Example, " 1 : Add Password"
+		print(" " + str(i+1) + " : " + option) # Example print, " 1 : Add Password "
 	print("\n Or enter 'q' to exit the program")
 	if error_msg is not None:
 		print('\n' + error_msg)
