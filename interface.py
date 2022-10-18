@@ -16,6 +16,14 @@ from secure import *
 import os
 DEBUG = False
 
+def clear():
+    '''
+    Clears the terminal screen and scroll back to present
+    the user with a nice clean, new screen. 
+    '''
+    os.system('cls||echo -e \\\\033c')
+
+
 
 def print_login_menu(option, error_msg = None):
 	"""
@@ -28,6 +36,7 @@ def print_login_menu(option, error_msg = None):
 	Returns : 
 	None
 	"""
+	clear()
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
 	print(" Enter \'q\' on keyboard to go back to the Main Menu")
@@ -68,6 +77,7 @@ def print_user_menu(options, error_msg = None, current_user = None):
 	Returns:
 	None
 	"""
+	clear()
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
 	if current_user is not None:
@@ -128,7 +138,6 @@ def process_login_selection(option):
 	None
 	"""
 	while True:
-
 		user_Input = input('Your Input: ')
 		if user_Input == "": # Invalid input for any operation.
 			error_msg = " Error: Must have an input!"
@@ -203,7 +212,7 @@ def display_user_options(option, error_msg = None):
 	Returns:
 	None
 	"""
-
+	clear()
 	print("--------------------------------------")
 	print("\t" + "Password Manager v.2.0\n")
 	print(" Enter \'q\' on keyboard to go back to Main Menu")
@@ -255,7 +264,7 @@ def process_user_options(option, user, encryption_key):
 	user_Input (string) : Returns the user input when a valid input has been entered.
 	"""
 	while True: # never ending loop until input is a valid entry
-	
+
 		user_Input = input("\nYour Input: ") 
 
 		if user_Input == "": # Invalid input for any operation.
@@ -300,12 +309,14 @@ def process_user_options(option, user, encryption_key):
 				return user_Input
 		elif option == "View All":
 			if user_Input == '1':
+				clear()
 				if count_all(user) == 0:
 					print('You have no passwords saved!')
 				else:
+					print("Format is: (user, pass, website)\n Your Passwords:\n")
 					items = show_all(user) # list of lists
 					for item in items:
-						print((item[0], decrypt_password(item[1], encryption_key), item[2])) # (Username Password Website)
+						print('', (item[0], decrypt_password(item[1], encryption_key), item[2])) # (Username Password Website)
 				return user_Input
 		elif option == "Delete All":
 			if user_Input == 'y':
@@ -319,6 +330,7 @@ def process_user_options(option, user, encryption_key):
 				if is_Valid_Website(user, inp[2]):
 					delete_Password(user, inp[2])
 				else:
+					clear()
 					print("\nNo pre-existing information was available to replace.\nPassword will be added to the database.\n")
 				encrypted_pass = encrypt_password(inp[1], encryption_key)
 				add_Password(user, inp[0], encrypted_pass, inp[2]) # Add the information regardless if information already existed for that particular website
@@ -342,6 +354,7 @@ def print_success():
 	None
 	"""
 	while True:
+
 		print("--------------------------------------")
 		print("\t" + "Password Manager v.2.0\n")
 		print('Success!\nInput \'y\' to start again!')
@@ -356,11 +369,10 @@ def print_success():
 		
 def main():
 	login_options = ["User Login", "Register User", "Delete User"]
+	user_options = ["Add Password", "Delete Password", "Show password from a Site", "View All", "Delete All", "Replace Information"]
+	
 	if DEBUG:
 		login_options.append("See all users")
-	
-	options = ["Add Password", "Delete Password", "Show password from a Site", "View All", "Delete All", "Replace Information"]
-
 	if not os.path.exists('./password_database.v.2.db'): # version 2 
 		initialize_Database() # Only creates database if it doesn't already exist.
 
@@ -397,13 +409,13 @@ def main():
 
 	# Login is successful. Can access passwords database for that particular user.
 	while logged_in: 
-		print_user_menu(options, current_user = user)
-		user_Input = login_menu_selection(options)
+		print_user_menu(user_options, current_user = user)
+		user_Input = login_menu_selection(user_options)
 
 		if user_Input == "q" or user_Input == "Q": 
 			exit()
 		
-		option = options[int(user_Input) - 1]
+		option = user_options[int(user_Input) - 1]
 		display_user_options(option) # Valid option is selected, display the corresponding interface
 		user_Entry = process_user_options(option, user, encryption_key) # also processes the tasks if the entry is valid
 		if user_Entry == "q" or user_Entry == "Q":
