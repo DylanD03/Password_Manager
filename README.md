@@ -13,7 +13,7 @@
 <h3 align="center">Password_Manager</h3>
 
   <p align="center">
-    A Password Manager that can store/retrive passwords for websites that you use! Supports multiple users and encrypts all data before storage. Enjoy!
+    A Password Manager that can store/retrieve passwords for websites that you use! Supports multiple users and encrypts all data before storage. Enjoy!
     <br />
     <a href="https://github.com/DylanD03/Password_Manager"><strong>Explore the docs »</strong></a>
     <br />
@@ -63,12 +63,12 @@
 
 ### Prerequisites
 
-Must install the prerequsite packages before running the Password Manager
+Must install the prerequisite packages before running the Password Manager.
 
 * Install [Python](https://www.python.org/)
 
 * Install cryptography package
-* You can do this by opening terminal and running the command below
+* You can do this by opening the terminal and running the command below.
   ```sh
   pip install cryptography
   ```
